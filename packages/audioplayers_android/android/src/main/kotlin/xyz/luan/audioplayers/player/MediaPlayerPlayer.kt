@@ -1,10 +1,10 @@
 package xyz.luan.audioplayers.player
 
-import android.media.MediaDataSource
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.PowerManager
 import xyz.luan.audioplayers.AudioContextAndroid
+import xyz.luan.audioplayers.Logger
 import xyz.luan.audioplayers.source.Source
 
 class MediaPlayerPlayer(
@@ -65,12 +65,20 @@ class MediaPlayerPlayer(
     }
 
     override fun stop() {
-        mediaPlayer.stop()
+        try {
+            mediaPlayer.stop()
+        } catch (e: IllegalStateException) {
+            Logger.error("mediaPlayer.stop() IllegalStateException", e)
+        }
     }
 
     override fun release() {
-        mediaPlayer.reset()
-        mediaPlayer.release()
+        try {
+            mediaPlayer.reset()
+            mediaPlayer.release()
+        } catch (e: IllegalStateException) {
+            Logger.error("mediaPlayer.release() IllegalStateException", e)
+        }
     }
 
     override fun seekTo(position: Int) {

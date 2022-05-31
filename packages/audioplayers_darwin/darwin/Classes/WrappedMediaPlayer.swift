@@ -11,6 +11,7 @@ class WrappedMediaPlayer {
     
     var playerId: String
     var player: AVPlayer?
+    var playerLooper: AVPlayerLooper?
     
     var observers: [TimeObserver]
     var keyValueObservation: NSKeyValueObservation?
@@ -131,14 +132,13 @@ class WrappedMediaPlayer {
         if !isPlaying {
             return
         }
-
-        seek(time: toCMTime(millis: 0)) {
-            if self.looping {
-                self.resume()
-            } else {
-                self.isPlaying = false
-            }
-        }
+        
+//        pause()
+//        if looping {
+//            seek(time: toCMTime(millis: 0)) {
+//                self.resume()
+//            }
+//        }
         
         reference.controlAudioSession()
         reference.onComplete(playerId: playerId)
@@ -178,7 +178,10 @@ class WrappedMediaPlayer {
                 existingPlayer.replaceCurrentItem(with: playerItem)
                 player = existingPlayer
             } else {
-                player = AVPlayer.init(playerItem: playerItem)
+                player = AVQueuePlayer.init(playerItem: playerItem)
+                if(looping) {
+                  playerLooper = AVPlayerLooper(player: player as! AVQueuePlayer, templateItem: playerItem)
+                }
                 configParameters(player: player)
                 
                 self.player = player
