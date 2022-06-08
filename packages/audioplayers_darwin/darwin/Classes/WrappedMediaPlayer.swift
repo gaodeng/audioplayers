@@ -223,6 +223,9 @@ class WrappedMediaPlayer {
             
             keyValueObservation?.invalidate()
             keyValueObservation = newKeyValueObservation
+            if(looping) {
+              completer?()
+            }
         } else {
             if playbackStatus == .readyToPlay {
                 completer?()
